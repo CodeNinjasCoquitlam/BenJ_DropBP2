@@ -10,12 +10,14 @@ public class GameManagerScrpt : MonoBehaviour
     public GameObject title;
     private Vector2 screenBounds;
     public int FallDistance;
-    public int score;
     public GameObject splash;
-    private Text _text;
     public GameObject playerPrefab;
     private GameObject player;
     private bool gameStarted = false;
+    public GameObject scoreSystem;
+    public Text scoreText;
+    public int pointsWorth;
+    private int score;
 
 
 
@@ -26,18 +28,21 @@ public class GameManagerScrpt : MonoBehaviour
         player = Instantiate(playerPrefab, new Vector3(0, 0, 0), playerPrefab.transform.rotation);
         gameStarted = true;
         splash.SetActive(false);
+
+        scoreText.enabled = true;
+        scoreSystem.GetComponent<Score>().score = 0;
+        scoreSystem.GetComponent<Score>().Start();
     }
     void Start()
     {
         spawner.active = false;
         title.SetActive(true);
-        score = 0;
         splash.SetActive(false);
         
     }
     void Awake()
     {
-        _text = GameObject.Find("ScoreText").GetComponent<Text>();
+        scoreText.enabled = false;
         spawner = GameObject.Find("Spawner").GetComponent<Spawner>();
         screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
         player = playerPrefab;
@@ -52,7 +57,7 @@ public class GameManagerScrpt : MonoBehaviour
     }
     void Update()
     {
-        _text.text = "Score: " + score;
+        
 
 
         if (!gameStarted)
@@ -72,9 +77,14 @@ public class GameManagerScrpt : MonoBehaviour
 
         foreach (GameObject bombObject in nextBomb)
         {
-            if (bombObject.transform.position.y < (-screenBounds.y) - FallDistance || !gameStarted)
+            if (!gameStarted)
             {
-                score++;
+
+                Destroy(bombObject);
+
+            } else if (bombObject.transform.position.y < (-screenBounds.y) - FallDistance || !gameStarted)
+            {
+                scoreSystem.GetComponent<Score>().AddScore(pointsWorth);
                 Destroy(bombObject);
                 
             }
