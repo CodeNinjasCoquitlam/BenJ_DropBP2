@@ -10,7 +10,7 @@ public class Reset : MonoBehaviour
         Destroy(gameObject);
     }
     /*public void OnTriggerEnter(Collider other)
-    {
+    {/
         SceneManager.LoadScene(0);
     }*/
 }
